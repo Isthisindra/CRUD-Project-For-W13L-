@@ -1,0 +1,29 @@
+name: crud_project_for_w13l
+description: "Aplikasi CRUD sederhana menggunakan Flutter, Provider, dan Supabase."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  provider: ^6.1.2
+
+  # Backend & Database
+  supabase_flutter: ^2.3.4
+
+  # Icons Cupertino
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: false
