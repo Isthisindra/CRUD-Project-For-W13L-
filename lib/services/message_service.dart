@@ -70,12 +70,12 @@ class MessageService {
           table: messagesTable,
           callback: (payload) {
             final newMsg = MessageModel.fromMap(
-              payload.newRecord as Map<String, dynamic>,
+              payload.newRecord,
             );
 
             // Filter hanya pesan yang relevan dengan percakapan ini
-            final isRelevant =
-                (newMsg.senderId == myId && newMsg.receiverId == otherUserId) ||
+            final isRelevant = (newMsg.senderId == myId &&
+                    newMsg.receiverId == otherUserId) ||
                 (newMsg.senderId == otherUserId && newMsg.receiverId == myId);
 
             if (isRelevant && newMsg.teamId == teamId) {

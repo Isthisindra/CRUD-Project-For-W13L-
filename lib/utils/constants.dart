@@ -1,15 +1,9 @@
 // lib/utils/constants.dart
-// Konstanta global yang digunakan di seluruh aplikasi.
-// ⚠️ Ganti SUPABASE_URL dan SUPABASE_ANON_KEY dengan kredensial project kamu.
 
-/// URL project Supabase kamu.
-/// Contoh: 'https://abcdefghijklm.supabase.co'
-const String supabaseUrl = 'https://YOUR_PROJECT_ID.supabase.co';
+const String supabaseUrl = 'https://ucvcpvdnrlgipvzkgyrm.supabase.co';
 
-/// Anonymous key dari Supabase (aman dipakai di client).
-const String supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+const String supabaseAnonKey ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjdmNwdmRucmxnaXB2emtneXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwOTczMDUsImV4cCI6MjA5NDY3MzMwNX0.Ki29ItI3CtSGcZpuKJrDjGE9six69Y1pefWLXTwFsBA';
 
-/// Nama tabel di Supabase database.
 const String itemsTable = 'items';
 const String profilesTable = 'profiles';
 const String teamsTable = 'teams';

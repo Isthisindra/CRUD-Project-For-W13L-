@@ -21,12 +21,12 @@ class TeamModel {
   /// Buat objek TeamModel dari Map (respons Supabase).
   factory TeamModel.fromMap(Map<String, dynamic> map) {
     return TeamModel(
-      id: map['id'] as String,
+      id: map['id'].toString(),
       name: map['name'] as String,
       teamCode: map['team_code'] as String,
       teamPass: map['team_pass'] as String,
-      createdBy: map['created_by'] as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
+      createdBy: map['created_by'].toString(),
+      createdAt: DateTime.parse(map['created_at'].toString()),
     );
   }
 

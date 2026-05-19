@@ -27,7 +27,8 @@ class DetailScreen extends StatelessWidget {
       context: context,
       builder: (_) => CupertinoAlertDialog(
         title: const Text('Hapus Item'),
-        content: Text('Yakin ingin menghapus "${item.name}"?\nTindakan ini tidak bisa dibatalkan.'),
+        content: Text(
+            'Yakin ingin menghapus "${item.name}"?\nTindakan ini tidak bisa dibatalkan.'),
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -38,7 +39,9 @@ class DetailScreen extends StatelessWidget {
             isDestructiveAction: true,
             onPressed: () async {
               Navigator.of(context).pop(); // Tutup dialog
-              await context.read<ItemProvider>().deleteItem(item.id, item.teamId);
+              await context
+                  .read<ItemProvider>()
+                  .deleteItem(item.id, item.teamId);
               if (context.mounted) {
                 Navigator.of(context).pop(); // Kembali ke HomeScreen
               }
@@ -81,7 +84,7 @@ class DetailScreen extends StatelessWidget {
                     width: 72,
                     height: 72,
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemBlue.withOpacity(0.12),
+                      color: CupertinoColors.systemBlue.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: const Icon(
@@ -111,7 +114,9 @@ class DetailScreen extends StatelessWidget {
             const SizedBox(height: 8),
             _buildInfoCard(
               child: Text(
-                item.description.isEmpty ? 'Tidak ada deskripsi.' : item.description,
+                item.description.isEmpty
+                    ? 'Tidak ada deskripsi.'
+                    : item.description,
                 style: TextStyle(
                   fontSize: 15,
                   color: item.description.isEmpty

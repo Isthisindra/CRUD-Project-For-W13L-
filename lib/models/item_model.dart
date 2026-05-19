@@ -19,8 +19,8 @@ class Item {
   /// Buat objek Item dari Map (respons Supabase).
   factory Item.fromMap(Map<String, dynamic> map) {
     return Item(
-      id: map['id'] as String,
-      teamId: map['team_id'] as String,
+      id: map['id'].toString(),
+      teamId: map['team_id'].toString(),
       name: map['name'] as String,
       description: map['description'] as String? ?? '',
       createdAt: DateTime.parse(map['created_at'] as String),

@@ -59,7 +59,7 @@ class _TeamScreenState extends State<TeamScreen> {
                       teamCode: codeController.text,
                       teamPass: passController.text,
                     );
-                    if (success && mounted) {
+                    if (success && context.mounted) {
                       Navigator.pop(context);
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(builder: (_) => const HomeScreen()),
@@ -104,7 +104,7 @@ class _TeamScreenState extends State<TeamScreen> {
                       teamCode: codeController.text,
                       teamPass: passController.text,
                     );
-                    if (success && mounted) {
+                    if (success && context.mounted) {
                       Navigator.pop(context);
                       Navigator.of(context).pushReplacement(
                         CupertinoPageRoute(builder: (_) => const HomeScreen()),
@@ -132,7 +132,7 @@ class _TeamScreenState extends State<TeamScreen> {
           child: const Icon(CupertinoIcons.square_arrow_right),
           onPressed: () async {
             await context.read<AuthProvider>().logout();
-            if (mounted) {
+            if (context.mounted) {
               Navigator.of(context).pushReplacement(
                 CupertinoPageRoute(builder: (_) => const LoginScreen()),
               );

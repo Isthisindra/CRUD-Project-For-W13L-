@@ -45,6 +45,7 @@ class AuthProvider extends ChangeNotifier {
       _errorMessage = null;
       return true;
     } catch (e) {
+      print('REGISTER ERROR: $e');
       _errorMessage = _parseError(e.toString());
       _setLoading(false);
       return false;

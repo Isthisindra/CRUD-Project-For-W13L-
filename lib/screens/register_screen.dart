@@ -87,61 +87,68 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(CupertinoIcons.person_add_solid, size: 80, color: CupertinoColors.systemBlue),
-              const SizedBox(height: 32),
-              CupertinoTextField(
-                controller: _nameController,
-                placeholder: 'Nama Lengkap',
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Icon(CupertinoIcons.person),
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 32),
+                const Icon(CupertinoIcons.person_add_solid,
+                    size: 80, color: CupertinoColors.systemBlue),
+                const SizedBox(height: 32),
+                CupertinoTextField(
+                  controller: _nameController,
+                  placeholder: 'Nama Lengkap',
+                  prefix: const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(CupertinoIcons.person),
+                  ),
+                  padding: const EdgeInsets.all(12),
                 ),
-                padding: const EdgeInsets.all(12),
-              ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _usernameController,
-                placeholder: 'Username',
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Icon(CupertinoIcons.at),
+                const SizedBox(height: 16),
+                CupertinoTextField(
+                  controller: _usernameController,
+                  placeholder: 'Username',
+                  prefix: const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(CupertinoIcons.at),
+                  ),
+                  padding: const EdgeInsets.all(12),
                 ),
-                padding: const EdgeInsets.all(12),
-              ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _passwordController,
-                placeholder: 'Password',
-                obscureText: true,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Icon(CupertinoIcons.lock),
+                const SizedBox(height: 16),
+                CupertinoTextField(
+                  controller: _passwordController,
+                  placeholder: 'Password',
+                  obscureText: true,
+                  prefix: const Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Icon(CupertinoIcons.lock),
+                  ),
+                  padding: const EdgeInsets.all(12),
                 ),
-                padding: const EdgeInsets.all(12),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: CupertinoButton.filled(
-                  onPressed: isLoading ? null : _register,
-                  child: isLoading
-                      ? const CupertinoActivityIndicator(color: CupertinoColors.white)
-                      : const Text('Daftar'),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: CupertinoButton.filled(
+                    onPressed: isLoading ? null : _register,
+                    child: isLoading
+                        ? const CupertinoActivityIndicator(
+                            color: CupertinoColors.white)
+                        : const Text('Daftar'),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              CupertinoButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(builder: (_) => const LoginScreen()),
-                  );
-                },
-                child: const Text('Sudah punya akun? Login di sini'),
-              ),
-            ],
+                const SizedBox(height: 16),
+                CupertinoButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      CupertinoPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                  },
+                  child: const Text('Sudah punya akun? Login di sini'),
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
       ),

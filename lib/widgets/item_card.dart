@@ -27,7 +27,7 @@ class ItemCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: CupertinoColors.systemGrey.withOpacity(0.15),
+              color: CupertinoColors.systemGrey.withValues(alpha: 0.15),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -42,7 +42,7 @@ class ItemCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: CupertinoColors.systemBlue.withOpacity(0.1),
+                  color: CupertinoColors.systemBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(

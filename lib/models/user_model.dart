@@ -17,10 +17,10 @@ class UserModel {
   /// Buat objek UserModel dari Map (respons Supabase).
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] as String,
+      id: map['id'].toString(),
       name: map['name'] as String,
       username: map['username'] as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
+      createdAt: DateTime.parse(map['created_at'].toString()),
     );
   }
 

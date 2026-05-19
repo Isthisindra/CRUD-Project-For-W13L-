@@ -30,10 +30,10 @@ class _DMListScreenState extends State<DMListScreen> {
       final team = context.read<TeamProvider>().activeTeam;
       if (team == null) return;
 
+      final currentUser = context.read<AuthProvider>().currentUser;
+
       final service = TeamService();
       final allMembers = await service.getTeamMembers(team.id);
-      
-      final currentUser = context.read<AuthProvider>().currentUser;
       
       // Hilangkan diri sendiri dari daftar
       if (currentUser != null) {

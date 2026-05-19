@@ -64,8 +64,20 @@ class _HomeScreenState extends State<HomeScreen> {
     final activeTeam = context.watch<TeamProvider>().activeTeam;
 
     if (activeTeam == null) {
-      return const CupertinoPageScaffold(
-        child: Center(child: Text('Tidak ada tim aktif')),
+      return CupertinoPageScaffold(
+        navigationBar: CupertinoNavigationBar(
+          middle: const Text('Pilih Tim'),
+          leading: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                CupertinoPageRoute(builder: (_) => const TeamScreen()),
+              );
+            },
+            child: const Icon(CupertinoIcons.back),
+          ),
+        ),
+        child: const Center(child: Text('Tidak ada tim aktif')),
       );
     }
 
