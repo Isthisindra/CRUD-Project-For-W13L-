@@ -1,10 +1,12 @@
 // lib/screens/detail_screen.dart
-// Halaman detail untuk menampilkan informasi lengkap satu item.
+// Halaman detail item dengan desain Stock+.
 
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../models/item_model.dart';
 import '../providers/item_provider.dart';
+import '../utils/app_theme.dart';
+import '../widgets/stock_button.dart';
 import 'edit_screen.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -19,6 +21,21 @@ class DetailScreen extends StatelessWidget {
         '${date.year} '
         '${date.hour.toString().padLeft(2, '0')}:'
         '${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _formatPrice(double price) {
+    final value = price.toInt();
+    final str = value.toString();
+    final buffer = StringBuffer();
+    int count = 0;
+    for (int i = str.length - 1; i >= 0; i--) {
+      if (count > 0 && count % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(str[i]);
+      count++;
+    }
+    return buffer.toString().split('').reversed.join();
   }
 
   /// Tampilkan dialog konfirmasi hapus.
@@ -56,175 +73,222 @@ class DetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: AppTheme.background,
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Detail Item'),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (_) => EditScreen(item: item),
-              ),
-            );
-          },
-          child: const Text('Edit'),
+        backgroundColor: AppTheme.white,
+        border: const Border(),
+        middle: const Text(
+          'Detail Item',
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
+        previousPageTitle: 'Back',
       ),
       child: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppTheme.spacingXXL),
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: AppTheme.spacingLG),
 
-            // Header ikon + nama
+            // Product image card - white wireframe icon in light blue container
             Center(
+              child: Container(
+                width: 180,
+                height: 180,
+                decoration: BoxDecoration(
+                  color: AppTheme.lightBlue,
+                  borderRadius: BorderRadius.circular(AppTheme.radiusXL),
+                ),
+                child: const Icon(
+                  CupertinoIcons.cube_box,
+                  size: 80,
+                  color: AppTheme.white,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: AppTheme.spacingXXL),
+
+            // Product name
+            Center(
+              child: Text(
+                item.name,
+                style: const TextStyle(
+                  fontSize: AppTheme.fontXXL,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+
+            const SizedBox(height: AppTheme.spacing3XL),
+
+            // Info cards with grid metadata details
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingXL),
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(AppTheme.radiusLG),
+                boxShadow: AppTheme.cardShadow,
+              ),
               child: Column(
                 children: [
-                  Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.systemBlue.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: const Icon(
-                      CupertinoIcons.doc_text_fill,
-                      size: 36,
-                      color: CupertinoColors.systemBlue,
-                    ),
+                  _buildInfoRow(
+                    'Deskripsi',
+                    item.description.isEmpty
+                        ? 'Tidak ada deskripsi'
+                        : item.description,
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    item.name,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: CupertinoColors.label,
-                    ),
-                    textAlign: TextAlign.center,
+                  _buildDivider(),
+                  _buildInfoRow(
+                    'Stock Quantity',
+                    '${item.stock} units',
                   ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Section: Deskripsi
-            _buildSectionLabel('Deskripsi'),
-            const SizedBox(height: 8),
-            _buildInfoCard(
-              child: Text(
-                item.description.isEmpty
-                    ? 'Tidak ada deskripsi.'
-                    : item.description,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: item.description.isEmpty
-                      ? CupertinoColors.tertiaryLabel
-                      : CupertinoColors.label,
-                  height: 1.5,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Section: Dibuat pada
-            _buildSectionLabel('Dibuat Pada'),
-            const SizedBox(height: 8),
-            _buildInfoCard(
-              child: Row(
-                children: [
-                  const Icon(
-                    CupertinoIcons.clock,
-                    size: 16,
-                    color: CupertinoColors.secondaryLabel,
+                  _buildDivider(),
+                  _buildInfoRow(
+                    'Buy Price',
+                    'Rp ${_formatPrice(item.buyPrice)}',
                   ),
-                  const SizedBox(width: 8),
-                  Text(
+                  _buildDivider(),
+                  _buildInfoRow(
+                    'Sell Price',
+                    'Rp ${_formatPrice(item.sellPrice)}',
+                  ),
+                  _buildDivider(),
+                  _buildInfoRowWithBadge(
+                    'Category',
+                    item.category.isEmpty ? 'General' : item.category,
+                  ),
+                  _buildDivider(),
+                  _buildInfoRow(
+                    'Dibuat Pada',
                     _formatDate(item.createdAt),
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: CupertinoColors.label,
-                    ),
+                  ),
+                  _buildDivider(),
+                  _buildInfoRow(
+                    'Team ID',
+                    item.teamId,
+                    isSmall: true,
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: AppTheme.spacing3XL),
 
-            // Section: ID
-            _buildSectionLabel('ID'),
-            const SizedBox(height: 8),
-            _buildInfoCard(
-              child: Text(
-                item.id,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.secondaryLabel,
-                  fontFamily: 'Courier',
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            // Tombol Edit
-            CupertinoButton.filled(
-              onPressed: () {
-                Navigator.of(context).push(
-                  CupertinoPageRoute(
-                    builder: (_) => EditScreen(item: item),
+            // Action buttons
+            Row(
+              children: [
+                Expanded(
+                  child: StockButton(
+                    label: 'Edit',
+                    icon: CupertinoIcons.pencil,
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        CupertinoPageRoute(
+                          builder: (_) => EditScreen(item: item),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-              child: const Text('Edit Item'),
+                ),
+                const SizedBox(width: AppTheme.spacingMD),
+                Expanded(
+                  child: StockButton(
+                    label: 'Delete',
+                    icon: CupertinoIcons.trash,
+                    style: StockButtonStyle.danger,
+                    onPressed: () => _confirmDelete(context),
+                  ),
+                ),
+              ],
             ),
 
-            const SizedBox(height: 12),
-
-            // Tombol Hapus (destruktif)
-            CupertinoButton(
-              color: CupertinoColors.destructiveRed,
-              onPressed: () => _confirmDelete(context),
-              child: const Text(
-                'Hapus Item',
-                style: TextStyle(color: CupertinoColors.white),
-              ),
-            ),
-
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.spacingXXL),
           ],
         ),
       ),
     );
   }
 
-  /// Widget label section.
-  Widget _buildSectionLabel(String label) {
-    return Text(
-      label.toUpperCase(),
-      style: const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: CupertinoColors.secondaryLabel,
-        letterSpacing: 0.5,
+  Widget _buildInfoRow(String label, String value, {bool isSmall = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMD),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                fontSize: isSmall ? AppTheme.fontXS : AppTheme.fontMD,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.textPrimary,
+                fontFamily: isSmall ? 'Courier' : null,
+              ),
+              textAlign: TextAlign.end,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  /// Widget container info dengan rounded corner.
-  Widget _buildInfoCard({required Widget child}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: CupertinoColors.systemGrey5),
+  Widget _buildInfoRowWithBadge(String label, String badge) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMD),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.spacingMD,
+              vertical: AppTheme.spacingXS,
+            ),
+            decoration: BoxDecoration(
+              color: AppTheme.lightBlue,
+              borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+            ),
+            child: Text(
+              badge,
+              style: const TextStyle(
+                fontSize: AppTheme.fontSM,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.primaryBlue,
+              ),
+            ),
+          ),
+        ],
       ),
-      child: child,
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      color: AppTheme.divider,
+      height: 1,
     );
   }
 }

@@ -1,8 +1,13 @@
 // lib/screens/login_screen.dart
+// Halaman login dengan desain Stock+.
+
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/team_provider.dart';
+import '../utils/app_theme.dart';
+import '../widgets/stock_text_field.dart';
+import '../widgets/stock_button.dart';
 import 'register_screen.dart';
 import 'team_screen.dart';
 import 'home_screen.dart';
@@ -14,14 +19,40 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  late AnimationController _animController;
+  late Animation<double> _fadeAnim;
+  late Animation<Offset> _slideAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOut,
+    );
+    _slideAnim = Tween<Offset>(
+      begin: const Offset(0, 0.15),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    ));
+    _animController.forward();
+  }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _animController.dispose();
     super.dispose();
   }
 
@@ -86,57 +117,98 @@ class _LoginScreenState extends State<LoginScreen> {
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Login'),
-      ),
+      backgroundColor: AppTheme.white,
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(CupertinoIcons.person_circle, size: 80, color: CupertinoColors.systemBlue),
-              const SizedBox(height: 32),
-              CupertinoTextField(
-                controller: _usernameController,
-                placeholder: 'Username',
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Icon(CupertinoIcons.at),
+        child: FadeTransition(
+          opacity: _fadeAnim,
+          child: SlideTransition(
+            position: _slideAnim,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXXL),
+              child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 80),
+
+                    // Logo
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryBlue,
+                        borderRadius: BorderRadius.circular(AppTheme.radiusXL),
+                      ),
+                      child: const Icon(
+                        CupertinoIcons.cube_box,
+                        size: 40,
+                        color: AppTheme.white,
+                      ),
+                    ),
+                    const SizedBox(height: AppTheme.spacingLG),
+
+                    // App Name
+                    const Text(
+                      'Stock+',
+                      style: TextStyle(
+                        fontSize: AppTheme.font3XL,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.textPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+
+                    const SizedBox(height: AppTheme.spacing4XL + 8),
+
+                    // Username field
+                    StockTextField(
+                      controller: _usernameController,
+                      placeholder: 'Username',
+                    ),
+                    const SizedBox(height: AppTheme.spacingLG),
+
+                    // Password field
+                    StockTextField(
+                      controller: _passwordController,
+                      placeholder: 'Password',
+                      obscureText: true,
+                    ),
+
+                    const SizedBox(height: AppTheme.spacing3XL),
+
+                    // Login button
+                    StockButton(
+                      label: 'Login',
+                      onPressed: isLoading ? null : _login,
+                      isLoading: isLoading,
+                    ),
+
+                    const SizedBox(height: AppTheme.spacingLG),
+
+                    // Register link
+                    CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          CupertinoPageRoute(
+                              builder: (_) => const RegisterScreen()),
+                        );
+                      },
+                      child: const Text(
+                        'Belum punya akun? Daftar di sini',
+                        style: TextStyle(
+                          fontSize: AppTheme.fontSM,
+                          color: AppTheme.primaryBlue,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: AppTheme.spacing3XL),
+                  ],
                 ),
-                padding: const EdgeInsets.all(12),
               ),
-              const SizedBox(height: 16),
-              CupertinoTextField(
-                controller: _passwordController,
-                placeholder: 'Password',
-                obscureText: true,
-                prefix: const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Icon(CupertinoIcons.lock),
-                ),
-                padding: const EdgeInsets.all(12),
-              ),
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                child: CupertinoButton.filled(
-                  onPressed: isLoading ? null : _login,
-                  child: isLoading
-                      ? const CupertinoActivityIndicator(color: CupertinoColors.white)
-                      : const Text('Login'),
-                ),
-              ),
-              const SizedBox(height: 16),
-              CupertinoButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(builder: (_) => const RegisterScreen()),
-                  );
-                },
-                child: const Text('Belum punya akun? Daftar di sini'),
-              ),
-            ],
+            ),
           ),
         ),
       ),

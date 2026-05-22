@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 import '../models/item_model.dart';
 import '../providers/item_provider.dart';
 import '../providers/team_provider.dart';
+import '../utils/app_theme.dart';
+import '../widgets/stock_text_field.dart';
+import '../widgets/stock_button.dart';
 
 class EditScreen extends StatefulWidget {
   /// Item yang akan diedit (diterima dari halaman sebelumnya).
@@ -20,6 +23,10 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
+  late TextEditingController _stockController;
+  late TextEditingController _buyPriceController;
+  late TextEditingController _sellPriceController;
+  late TextEditingController _categoryController;
   bool _isUpdating = false;
 
   @override
@@ -27,14 +34,21 @@ class _EditScreenState extends State<EditScreen> {
     super.initState();
     // Pre-fill field dengan data item yang ada
     _nameController = TextEditingController(text: widget.item.name);
-    _descriptionController =
-        TextEditingController(text: widget.item.description);
+    _descriptionController = TextEditingController(text: widget.item.description);
+    _stockController = TextEditingController(text: widget.item.stock.toString());
+    _buyPriceController = TextEditingController(text: widget.item.buyPrice.toString());
+    _sellPriceController = TextEditingController(text: widget.item.sellPrice.toString());
+    _categoryController = TextEditingController(text: widget.item.category);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
+    _stockController.dispose();
+    _buyPriceController.dispose();
+    _sellPriceController.dispose();
+    _categoryController.dispose();
     super.dispose();
   }
 
@@ -42,6 +56,10 @@ class _EditScreenState extends State<EditScreen> {
   Future<void> _updateItem() async {
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
+    final stockStr = _stockController.text.trim();
+    final buyPriceStr = _buyPriceController.text.trim();
+    final sellPriceStr = _sellPriceController.text.trim();
+    final category = _categoryController.text.trim();
 
     // Validasi: nama tidak boleh kosong
     if (name.isEmpty) {
@@ -51,10 +69,19 @@ class _EditScreenState extends State<EditScreen> {
 
     setState(() => _isUpdating = true);
 
+    // Parse values
+    final stock = int.tryParse(stockStr) ?? 0;
+    final buyPrice = double.tryParse(buyPriceStr) ?? 0.0;
+    final sellPrice = double.tryParse(sellPriceStr) ?? 0.0;
+
     // Buat objek Item dengan data yang sudah diupdate
     final updatedItem = widget.item.copyWith(
       name: name,
       description: description,
+      stock: stock,
+      buyPrice: buyPrice,
+      sellPrice: sellPrice,
+      category: category,
     );
 
     final teamId = context.read<TeamProvider>().activeTeam!.id;
@@ -95,88 +122,134 @@ class _EditScreenState extends State<EditScreen> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: AppTheme.background,
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Edit Item'),
+        backgroundColor: AppTheme.white,
+        border: const Border(),
+        middle: const Text(
+          'Edit Item',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Batal'),
         ),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: _isUpdating ? null : _updateItem,
-          child: _isUpdating
-              ? const CupertinoActivityIndicator()
-              : const Text(
-                  'Simpan',
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-        ),
       ),
       child: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppTheme.spacingXXL),
           children: [
-            const SizedBox(height: 16),
-            // Label nama
+            // Nama Item
             const Text(
               'Nama Item',
               style: TextStyle(
-                fontSize: 13,
-                color: CupertinoColors.secondaryLabel,
-                fontWeight: FontWeight.w500,
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 8),
-            CupertinoTextField(
+            const SizedBox(height: AppTheme.spacingSM),
+            StockTextField(
               controller: _nameController,
               placeholder: 'Masukkan nama item',
-              padding: const EdgeInsets.all(14),
-              clearButtonMode: OverlayVisibilityMode.editing,
               textCapitalization: TextCapitalization.sentences,
-              decoration: BoxDecoration(
-                color: CupertinoColors.systemBackground,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: CupertinoColors.systemGrey4,
-                ),
-              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppTheme.spacingXL),
 
-            // Label deskripsi
+            // Deskripsi
             const Text(
               'Deskripsi',
               style: TextStyle(
-                fontSize: 13,
-                color: CupertinoColors.secondaryLabel,
-                fontWeight: FontWeight.w500,
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 8),
-            CupertinoTextField(
+            const SizedBox(height: AppTheme.spacingSM),
+            StockTextField(
               controller: _descriptionController,
               placeholder: 'Masukkan deskripsi (opsional)',
-              padding: const EdgeInsets.all(14),
-              maxLines: 5,
+              maxLines: 3,
               textCapitalization: TextCapitalization.sentences,
-              decoration: BoxDecoration(
-                color: CupertinoColors.systemBackground,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: CupertinoColors.systemGrey4,
-                ),
+            ),
+            const SizedBox(height: AppTheme.spacingXL),
+
+            // Stock Quantity
+            const Text(
+              'Stock Quantity',
+              style: TextStyle(
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 32),
-
-            // Tombol update utama
-            CupertinoButton.filled(
-              onPressed: _isUpdating ? null : _updateItem,
-              child: _isUpdating
-                  ? const CupertinoActivityIndicator(color: CupertinoColors.white)
-                  : const Text('Simpan Perubahan'),
+            const SizedBox(height: AppTheme.spacingSM),
+            StockTextField(
+              controller: _stockController,
+              placeholder: 'Masukkan jumlah stok (e.g. 150)',
+              keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: AppTheme.spacingXL),
+
+            // Buy Price
+            const Text(
+              'Buy Price (Harga Beli)',
+              style: TextStyle(
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSM),
+            StockTextField(
+              controller: _buyPriceController,
+              placeholder: 'Masukkan harga beli (e.g. 2000)',
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            ),
+            const SizedBox(height: AppTheme.spacingXL),
+
+            // Sell Price
+            const Text(
+              'Sell Price (Harga Jual)',
+              style: TextStyle(
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSM),
+            StockTextField(
+              controller: _sellPriceController,
+              placeholder: 'Masukkan harga jual (e.g. 2500)',
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            ),
+            const SizedBox(height: AppTheme.spacingXL),
+
+            // Category
+            const Text(
+              'Kategori',
+              style: TextStyle(
+                fontSize: AppTheme.fontSM,
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: AppTheme.spacingSM),
+            StockTextField(
+              controller: _categoryController,
+              placeholder: 'Masukkan kategori (e.g. Food, Drink, Gadget)',
+              textCapitalization: TextCapitalization.words,
+            ),
+            const SizedBox(height: AppTheme.spacing3XL),
+
+            // Simpan Perubahan Button
+            StockButton(
+              label: 'Simpan Perubahan',
+              onPressed: _isUpdating ? null : _updateItem,
+              isLoading: _isUpdating,
+            ),
+            const SizedBox(height: AppTheme.spacingXXL),
           ],
         ),
       ),
